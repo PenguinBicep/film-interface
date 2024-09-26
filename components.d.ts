@@ -7,7 +7,13 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Comment: typeof import('./src/components/Comment.vue')['default']
+    DialogComment: typeof import('./src/components/DialogComment.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
+    ListMovies: typeof import('./src/components/ListMovies.vue')['default']
+    MovieCard: typeof import('./src/components/MovieCard.vue')['default']
+    MovieDetail: typeof import('./src/components/MovieDetail.vue')['default']
+    MovieInformation: typeof import('./src/components/MovieInformation.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
