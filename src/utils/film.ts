@@ -1,30 +1,35 @@
 export interface Movie {
-  _id: string;
-
-  poster: string;
+  id: number;
 
   title: string;
 
-  synopsis: string;
-
   director: string;
 
-  mainCharacters: string[];
+  overview: string;
 
-  rating: number;
+  poster_path: string | null;
 
-  votes: number;
+  release_date: string;
+
+  vote_average: number;
+
+  vote_count: number;
+
+  cast: string[];
+
+  genres: string[];
 
   comments: Comment[];
 }
-
+// export type Message = string | { message: string; isHtml: true };
 export interface Comment {
   user: string;
 
-  message: string;
+  /** html string, example : '<p>my comment is cool</p>' */
+  content: string;
 
   rating: number;
 
-  createdAt: string;
   /** ISO string */
+  created_at?: string;
 }

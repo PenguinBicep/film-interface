@@ -2,24 +2,26 @@
   <div class="p-4 flex flex-col align-center">
     <MovieCard
       class="mc-wrapper"
-      :movie="movie"
+      :movie="currentMovie"
       :need-complete="true"
       @rate="isDialogCommentOpen = true"
     />
-    <Comment />
+    <Comment :movie="currentMovie" />
     <DialogComment
-      v-model:selected-movie="movie"
+      v-model:selected-movie="currentMovie"
       v-model="isDialogCommentOpen"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { Movie } from "@/utils/film";
-import { MOVIES } from "@/utils/mocks";
+import { useMovieStore } from "@/store/movie";
+
+import { storeToRefs } from "pinia";
 import { ref } from "vue";
 
-const movie = ref<Movie>(JSON.parse(JSON.stringify(MOVIES[0])));
+const movieStore = useMovieStore();
+const { currentMovie } = storeToRefs(movieStore);
 
 const isDialogCommentOpen = ref(false);
 </script>

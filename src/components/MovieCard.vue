@@ -1,20 +1,35 @@
 <template>
-  <div class="flex flex-col mb-4 h-30 justify-start w-4/5">
+  <div class="mb-4 h-30" :class="{ 'w-4/5': needComplete }">
     <div
-      class="relative flex h-full rounded-lg space-y-3 shadow-lg p-3 mx-auto border border-white bg-white"
-      :style="{ width: needComplete ? '80%' : '60%' }"
+      class="relative flex h-full bg-slate-200 shadow-lg m-auto rounded-xl p-1 overflow-hidden"
+      :style="{ width: needComplete ? '100%' : 'auto' }"
     >
       <v-img
-        :style="{
-          width: needComplete ? '50%' : '7rem',
-          height: needComplete ? 'auto' : '7rem',
-        }"
-        :src="movie.poster"
+        v-if="!needComplete"
+        class="rounded m-2 w-28 h-28"
+        cover
+        :src="`${imgUrl}`"
+        :alt="`affiche de ${movie.title}`"
       ></v-img>
 
-      <div class="w-full bg-white flex flex-col justify-between p-3">
+      <v-tooltip v-else location="start bottom" origin="overlap">
+        <template #activator="{ props }">
+          <div
+            class="bg-cover bg-top h-full w-full relative"
+            :style="{ 'background-image': `url(${imgUrl})` }"
+            v-bind="props"
+          ></div>
+        </template>
+        <v-img
+          :src="imgUrl"
+          width="200"
+          height="200"
+          class="bg-slate-200 w-full h-full"
+        ></v-img>
+      </v-tooltip>
+      <div class="w-full flex flex-col justify-between p-4">
         <div class="flex justify-between item-center">
-          <p class="text-gray-500 font-medium">
+          <p v-if="movie.director" class="text-gray-500 font-medium">
             <span class="text-l font-black text-gray-800">Par</span>
             {{ movie.director }}
           </p>
@@ -34,9 +49,9 @@
             <v-icon icon="mdi-star" class="text-yellow-500"></v-icon>
 
             <p class="text-gray-600 font-bold text-sm ml-1">
-              {{ movie.rating }}
+              {{ movie.vote_average }}
               <span class="text-gray-500 font-normal">{{
-                `(${movie.votes} votes)`
+                `(${movie.vote_count} votes)`
               }}</span>
             </p>
           </div>
@@ -45,14 +60,18 @@
           {{ movie.title }}
         </h3>
         <template v-if="needComplete">
-          <p class="text-md text-gray-500 text-base overflow-scroll">
+          <p class="text-md text-gray-500 overflow-scroll">
+            <span class="font-black text-gray-800">Genres:</span>
+            {{ movie.genres.join(", ") }}
+          </p>
+          <p class="text-sm text-gray-500 h-32 overflow-scroll">
             <span class="font-black text-gray-800">Synopsis:</span>
-            {{ movie.synopsis }}
+            {{ movie.overview }}
           </p>
           <p class="text-l font-black text-gray-800">
             Casting Principal:
-            <span class="font-normal text-gray-600 text-base">{{
-              movie.mainCharacters.join(",")
+            <span class="font-normal text-gray-500">{{
+              movie.cast.join(", ")
             }}</span>
           </p>
         </template>
@@ -65,9 +84,10 @@
   </div>
 </template>
 <script setup lang="ts">
+import { API_BASE_IMG } from "@/const/api";
 import { Movie } from "@/utils/film";
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     movie: Movie;
     needComplete?: boolean;
@@ -76,6 +96,8 @@ withDefaults(
     needComplete: false,
   }
 );
+
+const imgUrl = API_BASE_IMG + props.movie.poster_path;
 
 const emit = defineEmits(["callback", "rate"]);
 </script>

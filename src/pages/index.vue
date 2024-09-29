@@ -1,39 +1,50 @@
 <template>
   <v-infinite-scroll :items="movies" :onLoad="load">
-    <div class="flex flex-col align-start">
+    <div class="grid grid-cols-2 gap-1">
       <MovieCard
-        v-for="(movie, index) in movies"
+        v-for="movie in movies"
         :movie="movie"
-        :key="index"
-        @callback="redirect()"
+        :key="movie.id"
+        @callback="redirect(movie)"
       />
     </div>
   </v-infinite-scroll>
 </template>
 
 <script lang="ts" setup>
+import { useMovieStore } from "@/store/movie";
 import { Movie } from "@/utils/film";
-import { MOVIES } from "@/utils/mocks";
-import { ref } from "vue";
+import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
+import { watch } from "vue";
 
-const movies = ref<Movie[]>(
-  Array.from({ length: 20 }, () => {
-    const randomIndex = Math.floor(Math.random() * MOVIES.length);
-    const item = JSON.parse(JSON.stringify(MOVIES[randomIndex]));
-    return item;
-  })
-);
+const movieStore = useMovieStore();
 
+const { movies, page, query } = storeToRefs(movieStore);
+page.value = 0;
 const router = useRouter();
 
-console.log(movies.value);
+watch(
+  () => query.value,
+  async (_, previousQuery) => {
+    await movieStore.fetchMovies(previousQuery);
+  }
+);
 
-async function load() {
-  console.log("test");
+// @ts-expect-error untyped props
+async function load({ done }) {
+  if (query.value) {
+    done("ok");
+    return;
+  }
+  page.value++;
+  await movieStore.fetchMovies();
+  done("ok");
 }
 
-function redirect() {
+async function redirect(movie: Movie) {
+  movieStore.setMovie(movie);
+  await movieStore.fetchMovieData(movie.id);
   router.push("/moviedetail");
 }
 </script>
