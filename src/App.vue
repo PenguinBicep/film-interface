@@ -1,6 +1,5 @@
 <template>
   <v-app class="main-background">
-    <!-- Barre de recherche -->
     <v-app-bar color="grey-darken-4" density="compact" dark>
       <template #prepend>
         <v-btn icon="mdi-home-outline" @click="router.push('/')"></v-btn>
@@ -19,7 +18,6 @@
     </v-app-bar>
     <v-main>
       <v-container>
-        <!-- Route ou contenu spécifique de la page -->
         <router-view #default="{ Component }">
           <v-fade-transition mode="out-in">
             <component :is="Component"></component>
